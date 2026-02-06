@@ -228,3 +228,269 @@ plt.show()
 ------------------------------------------------------------------------
 
 **End of Notes**
+
+# Python Fundamentals: Introduction to Databases (SQL, NoSQL & Vector Databases)
+
+## 1. What Is a Database?
+
+A **database** is an organized collection of data stored electronically
+and managed by a Database Management System (DBMS).
+
+Why databases are used: - Efficient storage - Fast retrieval - Data
+integrity - Security - Concurrent access
+
+------------------------------------------------------------------------
+
+## 2. Types of Databases
+
+Main categories: - **Relational (SQL) Databases** - **NoSQL
+Databases** - **Vector Databases**
+
+------------------------------------------------------------------------
+
+# 3. SQL (Relational) Databases
+
+SQL = Structured Query Language.
+
+Examples: - MySQL - PostgreSQL - SQLite - Oracle - SQL Server
+
+### 3.1 Key Features
+
+-   Data stored in **tables**
+-   Rows and columns
+-   Fixed schema
+-   Relationships using keys
+-   ACID transactions
+
+### 3.2 Basic Terminology
+
+-   Table
+-   Row / Record
+-   Column / Field
+-   Primary Key
+-   Foreign Key
+
+------------------------------------------------------------------------
+
+## 3.3 Example Table
+
+  id   name   age
+  ---- ------ -----
+  1    Riya   20
+  2    Aman   22
+
+------------------------------------------------------------------------
+
+## 3.4 Basic SQL Commands
+
+### Create Table
+
+``` sql
+CREATE TABLE students (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    age INTEGER
+);
+```
+
+### Insert Data
+
+``` sql
+INSERT INTO students VALUES (1, 'Riya', 20);
+```
+
+### Query Data
+
+``` sql
+SELECT * FROM students;
+```
+
+### Filter
+
+``` sql
+SELECT name FROM students WHERE age > 21;
+```
+
+### Update
+
+``` sql
+UPDATE students SET age = 23 WHERE id = 2;
+```
+
+### Delete
+
+``` sql
+DELETE FROM students WHERE id = 1;
+```
+
+------------------------------------------------------------------------
+
+## 4. NoSQL Databases
+
+NoSQL = Not Only SQL.
+
+Used for: - Big data - Distributed systems - Flexible schemas -
+Real-time apps
+
+Examples: - MongoDB (Document) - Redis (Key-Value) - Cassandra (Wide
+Column) - Neo4j (Graph)
+
+------------------------------------------------------------------------
+
+## 4.1 Types of NoSQL Databases
+
+### Document-Based
+
+Stores data as JSON-like documents. Example:
+
+``` json
+{
+  "id": 1,
+  "name": "Riya",
+  "age": 20
+}
+```
+
+### Key--Value Stores
+
+    "user:101" → "active"
+
+### Column-Family
+
+Data grouped by columns.
+
+### Graph Databases
+
+Nodes + Edges + Relationships.
+
+------------------------------------------------------------------------
+
+## 4.2 SQL vs NoSQL
+
+  Feature        SQL            NoSQL
+  -------------- -------------- ---------------------
+  Schema         Fixed          Flexible
+  Scaling        Vertical       Horizontal
+  Structure      Tables         Documents/Key-Value
+  Transactions   Strong         Often eventual
+  Use Case       Banking, ERP   Big data, web apps
+
+------------------------------------------------------------------------
+
+# 5. Vector Databases
+
+Vector databases store **embeddings**---numerical representations of
+text, images, audio, etc.
+
+Used in: - AI search - Recommendation systems - Chatbots - RAG systems
+(Retrieval-Augmented Generation)
+
+Examples: - Pinecone - Weaviate - Milvus - FAISS - Chroma
+
+------------------------------------------------------------------------
+
+## 5.1 What Is an Embedding?
+
+An embedding is a list of numbers representing meaning:
+
+    [0.12, -0.45, 0.88, ...]
+
+Similar data → closer vectors.
+
+------------------------------------------------------------------------
+
+## 5.2 Key Operations
+
+-   Insert vectors
+-   Similarity search
+-   Nearest neighbor queries
+-   Indexing
+
+Distance metrics: - Cosine similarity - Euclidean distance - Dot product
+
+------------------------------------------------------------------------
+
+## 6. Using Databases in Python
+
+### 6.1 SQL with SQLite
+
+``` python
+import sqlite3
+
+conn = sqlite3.connect("school.db")
+cur = conn.cursor()
+
+cur.execute("SELECT * FROM students")
+rows = cur.fetchall()
+
+conn.close()
+```
+
+------------------------------------------------------------------------
+
+### 6.2 NoSQL with MongoDB (pymongo)
+
+``` python
+from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017/")
+db = client.school
+
+students = db.students.find()
+for s in students:
+    print(s)
+```
+
+------------------------------------------------------------------------
+
+### 6.3 Vector DB Example (Conceptual)
+
+``` python
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+embedding = model.encode("Databases are useful")
+
+# Store embedding in vector DB
+# db.insert(vector=embedding)
+```
+
+------------------------------------------------------------------------
+
+## 7. When to Use Which?
+
+Use SQL when: - Data is structured - Relationships matter - Transactions
+are critical
+
+Use NoSQL when: - Data changes often - High scalability is required -
+Distributed apps
+
+Use Vector DB when: - Semantic search needed - AI/ML systems -
+Recommendation engines
+
+------------------------------------------------------------------------
+
+## 8. Practice Questions
+
+1.  What is a relational database?
+2.  List two SQL databases.
+3.  Difference between SQL and NoSQL.
+4.  What is a vector database used for?
+5.  Name two vector databases.
+6.  Write a SQL query to select students older than 18.
+7.  Why are embeddings important?
+
+------------------------------------------------------------------------
+
+## 9. Quick Revision Sheet
+
+-   SQL → tables, schema, joins
+-   NoSQL → flexible, distributed
+-   Vector DB → similarity search
+-   Embeddings → numeric meaning
+-   Python connectors → sqlite3, pymongo
+
+------------------------------------------------------------------------
+
+**End of Notes**
