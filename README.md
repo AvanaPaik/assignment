@@ -494,3 +494,267 @@ Recommendation engines
 ------------------------------------------------------------------------
 
 **End of Notes**
+# Python Fundamentals: Time Series & Forecasting
+
+## 1. What Is Time Series Data?
+
+A **time series** is data collected over time at regular intervals.
+
+Examples: - Daily stock prices - Monthly sales - Hourly temperature -
+Website traffic
+
+Key characteristic: **time order matters**.
+
+------------------------------------------------------------------------
+
+## 2. Components of Time Series
+
+-   **Trend** -- long-term increase or decrease
+-   **Seasonality** -- repeating patterns (weekly, yearly)
+-   **Cyclic** -- long-term economic cycles
+-   **Noise / Residual** -- random variation
+
+------------------------------------------------------------------------
+
+## 3. Time Series in Python
+
+Common libraries: - pandas - numpy - matplotlib - statsmodels -
+scikit-learn - prophet
+
+------------------------------------------------------------------------
+
+## 4. Loading Time Series Data
+
+### CSV Example
+
+``` python
+import pandas as pd
+
+df = pd.read_csv("sales.csv", parse_dates=["date"])
+df.set_index("date", inplace=True)
+```
+
+### Check Frequency
+
+``` python
+df.index
+df.asfreq("M")  # monthly
+```
+
+------------------------------------------------------------------------
+
+## 5. Exploring Time Series
+
+### Basic Plots
+
+``` python
+import matplotlib.pyplot as plt
+
+df["sales"].plot()
+plt.title("Sales Over Time")
+plt.show()
+```
+
+### Summary Statistics
+
+``` python
+df.describe()
+```
+
+### Rolling Mean
+
+``` python
+df["sales"].rolling(window=7).mean()
+```
+
+------------------------------------------------------------------------
+
+## 6. Decomposition
+
+Split into trend, seasonality, and residual.
+
+``` python
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+result = seasonal_decompose(df["sales"], model="additive")
+result.plot()
+```
+
+------------------------------------------------------------------------
+
+## 7. Stationarity
+
+Many models require **stationary** data: - Mean constant over time -
+Variance constant
+
+### Augmented Dickey--Fuller Test
+
+``` python
+from statsmodels.tsa.stattools import adfuller
+
+adf_result = adfuller(df["sales"])
+print(adf_result[1])  # p-value
+```
+
+------------------------------------------------------------------------
+
+## 8. Making Data Stationary
+
+### Differencing
+
+``` python
+df["diff"] = df["sales"].diff()
+```
+
+### Log Transform
+
+``` python
+import numpy as np
+df["log_sales"] = np.log(df["sales"])
+```
+
+------------------------------------------------------------------------
+
+## 9. Forecasting Models
+
+### 9.1 Naive Forecast
+
+``` python
+forecast = df["sales"].iloc[-1]
+```
+
+------------------------------------------------------------------------
+
+### 9.2 Moving Average
+
+``` python
+df["ma_3"] = df["sales"].rolling(3).mean()
+```
+
+------------------------------------------------------------------------
+
+### 9.3 ARIMA
+
+ARIMA(p, d, q): - p → autoregressive - d → differencing - q → moving
+average
+
+``` python
+from statsmodels.tsa.arima.model import ARIMA
+
+model = ARIMA(df["sales"], order=(1,1,1))
+fit = model.fit()
+
+forecast = fit.forecast(steps=12)
+```
+
+------------------------------------------------------------------------
+
+### 9.4 SARIMA (Seasonal ARIMA)
+
+``` python
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+
+model = SARIMAX(df["sales"], order=(1,1,1),
+                seasonal_order=(1,1,1,12))
+fit = model.fit()
+
+forecast = fit.forecast(12)
+```
+
+------------------------------------------------------------------------
+
+### 9.5 Prophet (High Level)
+
+``` python
+from prophet import Prophet
+
+df_reset = df.reset_index().rename(columns={
+    "date": "ds",
+    "sales": "y"
+})
+
+model = Prophet()
+model.fit(df_reset)
+
+future = model.make_future_dataframe(periods=12, freq="M")
+forecast = model.predict(future)
+```
+
+------------------------------------------------------------------------
+
+## 10. Train--Test Split for Time Series
+
+Always split **chronologically**.
+
+``` python
+train = df[:-12]
+test = df[-12:]
+```
+
+------------------------------------------------------------------------
+
+## 11. Forecast Evaluation
+
+Metrics: - MAE -- Mean Absolute Error - MSE -- Mean Squared Error - RMSE
+-- Root Mean Squared Error - MAPE -- Percentage error
+
+``` python
+from sklearn.metrics import mean_absolute_error
+
+mae = mean_absolute_error(test, forecast)
+```
+
+------------------------------------------------------------------------
+
+## 12. Simple End-to-End Example
+
+``` python
+import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("sales.csv", parse_dates=["date"], index_col="date")
+
+train = df[:-12]
+test = df[-12:]
+
+model = ARIMA(train, order=(1,1,1))
+fit = model.fit()
+
+pred = fit.forecast(steps=12)
+
+test.plot()
+pred.plot()
+plt.show()
+```
+
+------------------------------------------------------------------------
+
+## 13. Practice Exercises
+
+1.  Load a time series CSV and set date as index.
+2.  Plot the data.
+3.  Compute 7-day rolling average.
+4.  Decompose the series.
+5.  Test for stationarity.
+6.  Fit an ARIMA model.
+7.  Forecast next 6 periods.
+8.  Calculate RMSE.
+
+------------------------------------------------------------------------
+
+## 14. Quick Revision Sheet
+
+-   Time series → ordered by time
+-   Components → trend, seasonality, noise
+-   Stationary → constant mean/variance
+-   Differencing → stabilize
+-   ARIMA / SARIMA → classical models
+-   Prophet → automated forecasting
+-   Rolling mean → smoothing
+-   Chronological split → train/test
+
+------------------------------------------------------------------------
+
+**End of Notes**
+
